@@ -1,0 +1,23 @@
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    networks:
+      - my_network
+
+  flask_app:
+    build:
+      context: .
+    container_name: flask_app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mongodb
+    networks:
+      - my_network
+
+networks:
+  my_network:
+
