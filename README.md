@@ -19,7 +19,7 @@ Virtual environment must be activated before starting Flask server (**Step 2**).
 3. In a new terminal, from the `frontend/` directory: `$ npm start:frontend`
 4. Navigate to [127.0.0.1:3000/](http://127.0.0.1:3000)
 
-Alternatively, from the `frontend/` directory, you may run `$ npm start` to start all three processes concurrently. However, all terminal output will be in a single terminal. Output from different processes can be distinguished by their `[#]` prefix.
+Alternatively, from the `frontend/` directory, you may run `$ npm start` to start all three processes concurrently. Virtual environment must be activated beforehand. All terminal output will be in a single terminal. Output from different processes can be distinguished by their `[#]` prefix.
 
 ## Docker stuff
 
