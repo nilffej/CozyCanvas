@@ -14,6 +14,7 @@ bundle.js
 *node_modules*
 files_for_autograder_io/
 */var/*
+package-lock.json
 
 # Virtual Machines
 .vagrant/
