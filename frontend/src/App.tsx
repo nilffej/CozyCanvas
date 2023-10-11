@@ -17,7 +17,7 @@ function App() {
 
   // return <div>API request result: {data}</div>;
   return (
-    <div>
+    <div style={{backgroundColor: "#18181b", height: "100vh", width:"100vw", position:"absolute", top:"0px", left:"0px"}}>
       <Canvas/>
     </div>
   )
