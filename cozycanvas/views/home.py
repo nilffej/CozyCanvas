@@ -10,4 +10,4 @@ def home_page():
         "test": "hi",
     })
     print(collection.find_one())
-    return collection.find_one()["test"]
+    return {"test": collection.find_one()["test"]}
