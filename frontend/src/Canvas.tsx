@@ -19,8 +19,6 @@ interface Coords {
   y: number;
 }
 
-
-
 // =======================
 // CANVAS PARAMS
 // =======================
@@ -39,7 +37,7 @@ export default function Canvas() {
   const [dragging, setDragging] = useState<boolean>(false);
 
   // To avoid DOM Errors, attach to Draggable component
-  const nodeRef = useRef(null);
+  const nodeRef = useRef<HTMLDivElement | null>(null);
 
   // To get coords of stage
   const anchorRef = useRef<HTMLDivElement | null>(null);
@@ -93,10 +91,11 @@ export default function Canvas() {
 
   const onDragEnd = (e: any, data: any) => {
     setDragging(false);
-    let dragStartCoords: Coords = {
-      x: e.pageX - e.layerX,
-      y: e.pageY - e.layerY,
-    };
+
+    // Get spawnerCoords relevant to page after dropping
+    const spawnerCoords = nodeRef?.current?.getBoundingClientRect();
+    const spawnX = spawnerCoords?.left;
+    const spawnY = spawnerCoords?.top;
 
     // Get stageCoords relevant to page
     const stageCoords = anchorRef?.current?.getBoundingClientRect();
@@ -106,14 +105,14 @@ export default function Canvas() {
     // Before subtracting offset, coords are relative to the page
     // Need to subtract offset to get coords relevant to the stage
     let dragEndCoords: Coords = {
-      x: dragStartCoords.x + data.x - (offsetX || 0),
-      y: dragStartCoords.y + data.y - (offsetY || 0),
+      x: (spawnX || 0) - (offsetX || 0),
+      y: (spawnY || 0) - (offsetY || 0),
     };
 
     // If box limits are out of bounds of canvas, then don't make anything
     if (
-      dragEndCoords.x + spawnWidth > 600 ||
-      dragEndCoords.y + spawnWidth > 800
+      dragEndCoords.x + spawnWidth > width ||
+      dragEndCoords.y + spawnWidth > height
     ) {
       return;
     }
@@ -169,19 +168,49 @@ export default function Canvas() {
 
   return (
     <div className="w-full h-full flex flex-row justify-center items-center">
-      <div className="flex flex-row justify-center items-center relative">
-        <div className="absolute top-0 left-0" ref={anchorRef}></div>
-        <Stage
-          width={width}
-          height={height}
+      <div
+        className="relative"
+        style={{
+          width: displayWidth,
+          height: displayWidth,
+        }}
+      >
+        <div
+          className="border-solid bg-slate-800 border-slate-100 border-2 absolute top-0 transition-all ease-in duration-200"
           style={{
-            display: "flex",
-            width: "fit-content",
+            width: displayWidth,
+            height: displayWidth,
+            opacity: dragging ? 0 : 1,
           }}
-          onMouseEnter={(e: any) => {
-            console.log(e);
-          }}
+        ></div>
+
+        <Draggable
+          position={{ x: 0, y: 0 }}
+          onStart={onDragStart}
+          onStop={onDragEnd}
+          nodeRef={nodeRef}
         >
+          <div
+            ref={nodeRef}
+            className="absolute bg-slate-700 z-20"
+            style={{
+              opacity: dragging ? 1 : 0,
+            }}
+          >
+            <div
+              className="absolute top-0 border-solid bg-slate-800 border-slate-100 border-2 transition-all ease-in-out duration-500"
+              style={{
+                width: dragging ? spawnWidth : displayWidth,
+                height: dragging ? spawnWidth : displayWidth,
+              }}
+            ></div>
+          </div>
+        </Draggable>
+      </div>
+      <div className="flex flex-row justify-center items-center relative">
+        {/* Used to get coords of stage */}
+        <div className="absolute top-0 left-0" ref={anchorRef}></div>
+        <Stage width={width} height={height} className="z-10">
           <Layer>
             <Rect
               x={0}
@@ -229,39 +258,6 @@ export default function Canvas() {
             })}
           </Layer>
         </Stage>
-      </div>
-      <div className="relative">
-        <div
-          className="border-solid bg-slate-800 border-slate-100 border-2 absolute top-0 z-0 transition-all ease-in duration-200"
-          style={{
-            width: displayWidth,
-            height: displayWidth,
-            opacity: dragging ? 0 : 1,
-          }}
-        ></div>
-
-        <Draggable
-          position={{ x: 0, y: 0 }}
-          onStart={onDragStart}
-          onStop={onDragEnd}
-          nodeRef={nodeRef}
-        >
-          <div
-            ref={nodeRef}
-            className="z-1 absolute bg-slate-700"
-            style={{
-              opacity: dragging ? 1 : 0,
-            }}
-          >
-            <div
-              className="absolute top-0 border-solid bg-slate-800 border-slate-100 border-2 transition-all ease-in-out duration-500"
-              style={{
-                width: dragging ? spawnWidth : displayWidth,
-                height: dragging ? spawnWidth : displayWidth,
-              }}
-            ></div>
-          </div>
-        </Draggable>
       </div>
     </div>
   );
