@@ -41,7 +41,7 @@ export default function Canvas() {
   const nodeRef = useRef(null);
 
   // To get coords of stage
-  const anchorRef = useRef(null);
+  const anchorRef = useRef<HTMLDivElement | null>(null);
 
   // Size of a furniture square in sidebar
   const displayWidth = 40;
@@ -54,9 +54,6 @@ export default function Canvas() {
   // Rect Coords are on top left corner
 
   const onFurnDragEnd = (e: any) => {
-    console.log(anchorRef);
-    console.log(e.target.attrs.x);
-
     let id = Number(e.target.attrs.id);
 
     // These coords are relevant to stage
@@ -81,7 +78,12 @@ export default function Canvas() {
       y = y - modY + Math.round(modY / gridSize) * gridSize;
     }
 
-    refs[id]?.current.to({ x: x, y: y, easing: Easings.EaseInOut, duration: .5 });
+    refs[id]?.current.to({
+      x: x,
+      y: y,
+      easing: Easings.EaseInOut,
+      duration: 0.5,
+    });
   };
 
   const onDragStart = (e: any) => {
@@ -94,14 +96,18 @@ export default function Canvas() {
       x: e.pageX - e.layerX,
       y: e.pageY - e.layerY,
     };
-    console.log(e);
-    // console.log(dragStartCoords.x, dragStartCoords.y)
 
+    // Get stageCoords relevant to page
+    const stageCoords = anchorRef?.current?.getBoundingClientRect();
+    const offsetX = stageCoords?.left;
+    const offsetY = stageCoords?.top;
+
+    // Before subtracting offset, coords are relative to the page
+    // Need to subtract offset to get coords relevant to the stage
     let dragEndCoords: Coords = {
-      x: dragStartCoords.x + data.x,
-      y: dragStartCoords.y + data.y,
+      x: dragStartCoords.x + data.x - (offsetX || 0),
+      y: dragStartCoords.y + data.y - (offsetY || 0),
     };
-
 
     // If box limits are out of bounds of canvas, then don't make anything
     if (
@@ -135,6 +141,10 @@ export default function Canvas() {
     // console.log(furniture);
   }, [furniture]);
 
+  useEffect(() => {
+    console.log(anchorRef?.current?.getBoundingClientRect());
+  }, []);
+
   // Handling spawning and snapping of a new furniture item
   useEffect(() => {
     if (refs.length !== 0) {
@@ -157,66 +167,68 @@ export default function Canvas() {
   }, [refs, furniture]);
 
   return (
-    <div className="flex flex-row justify-center items-center absolute top-0 w-full h-full">
-      <Stage
-        width={width}
-        height={height}
-        style={{
-          display: "flex",
-          width: "fit-content",
-        }}
-        onMouseEnter={(e:any) => {
-          console.log(e);
-        }}
-      >
-        <Layer>
-          <Rect
-            x={0}
-            y={0}
-            width={width}
-            height={height}
-            fill="#0f172a"
-            shadowBlur={10}
-            ref={anchorRef}
-          ></Rect>
-          <Shape
-            stroke="#1e293b"
-            strokeWidth={10}
-            sceneFunc={(context) => {
-              context.lineWidth = 4;
-              context.strokeStyle = "#1e293b";
-              context.beginPath();
-              let i = 0;
-              for (i = 0; i <= rows; i++) {
-                context.moveTo(gridSize * i, 0);
-                context.lineTo(gridSize * i, height);
-                context.stroke();
-              }
-              for (i = 0; i <= cols; i++) {
-                context.moveTo(0, gridSize * i);
-                context.lineTo(width, gridSize * i);
-                context.stroke();
-              }
+    <div className="w-full h-full flex flex-row justify-center items-center">
+      <div className="flex flex-row justify-center items-center relative">
+        <div className="absolute top-0 left-0" ref={anchorRef}></div>
+        <Stage
+          width={width}
+          height={height}
+          style={{
+            display: "flex",
+            width: "fit-content",
+          }}
+          onMouseEnter={(e: any) => {
+            console.log(e);
+          }}
+        >
+          <Layer>
+            <Rect
+              x={0}
+              y={0}
+              width={width}
+              height={height}
+              fill="#0f172a"
+              shadowBlur={10}
+            ></Rect>
+            <Shape
+              stroke="#1e293b"
+              strokeWidth={10}
+              sceneFunc={(context) => {
+                context.lineWidth = 4;
+                context.strokeStyle = "#1e293b";
+                context.beginPath();
+                let i = 0;
+                for (i = 0; i <= rows; i++) {
+                  context.moveTo(gridSize * i, 0);
+                  context.lineTo(gridSize * i, height);
+                  context.stroke();
+                }
+                for (i = 0; i <= cols; i++) {
+                  context.moveTo(0, gridSize * i);
+                  context.lineTo(width, gridSize * i);
+                  context.stroke();
+                }
 
-              context.closePath();
-            }}
-          />
-        </Layer>
-        <Layer>
-          {/* Spawn Layer */}
-          {furniture.map((furn: Furniture, i: number) => {
-            return (
-              <Rect
-                key={i}
-                id={`${i}`}
-                {...furn}
-                ref={refs[i]}
-                onDragEnd={onFurnDragEnd}
-              />
-            );
-          })}
-        </Layer>
-      </Stage>
+                context.closePath();
+              }}
+            />
+          </Layer>
+          <Layer>
+            {/* Spawn Layer */}
+            {furniture.map((furn: Furniture, i: number) => {
+              return (
+                <Rect
+                  key={i}
+                  id={`${i}`}
+                  {...furn}
+                  ref={refs[i]}
+                  onDragEnd={onFurnDragEnd}
+                />
+              );
+            })}
+          </Layer>
+        </Stage>
+      </div>
       <div className="relative">
         <div
           className="border-solid bg-slate-800 border-slate-100 border-2 absolute top-0 z-0 transition-all ease-in duration-200"
