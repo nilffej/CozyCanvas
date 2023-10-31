@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 
+import Canvas from "./pages/Canvas";
 import SidePanel from "./components/SidePanel/SidePanel";
 
 function App() {
@@ -15,10 +16,25 @@ function App() {
   //     .catch((err) => console.error(err));
   // }, []);
 
+  // return <div>API request result: {data}</div>;
   return (
-    <div>
-      <SidePanel></SidePanel>
-    </div>
+    <>
+      <div>
+        <SidePanel></SidePanel>
+      </div>
+      {/* <div
+        style={{
+          backgroundColor: "#18181b",
+          height: "100vh",
+          width: "100vw",
+          position: "absolute",
+          top: "0px",
+          left: "0px",
+        }}
+      >
+        <Canvas />
+      </div> */}
+    </>
   );
 }
 
