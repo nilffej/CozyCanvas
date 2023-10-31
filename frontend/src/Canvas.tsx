@@ -1,7 +1,8 @@
 import { useEffect, useState, useRef, createRef } from "react";
-import Draggable from "react-draggable";
+import DraggableTemplate from "./DraggableTemplate";
 import { Layer, Stage, Shape, Rect } from "react-konva";
 import { Easings } from "konva/lib/Tween";
+
 import "./index.css";
 
 interface Furniture {
@@ -33,8 +34,6 @@ export default function Canvas() {
   const [furniture, setFurniture] = useState<Furniture[]>([]);
 
   const [refs, setRefs] = useState<any[]>([]);
-
-  const [dragging, setDragging] = useState<boolean>(false);
 
   // To avoid DOM Errors, attach to Draggable component
   const nodeRef = useRef<HTMLDivElement | null>(null);
@@ -85,12 +84,8 @@ export default function Canvas() {
     });
   };
 
-  const onDragStart = (e: any) => {
-    setDragging(true);
-  };
 
   const onDragEnd = (e: any, data: any) => {
-    setDragging(false);
 
     // Get spawnerCoords relevant to page after dropping
     const spawnerCoords = nodeRef?.current?.getBoundingClientRect();
@@ -168,45 +163,7 @@ export default function Canvas() {
 
   return (
     <div className="w-full h-full flex flex-row justify-center items-center">
-      <div
-        className="relative"
-        style={{
-          width: displayWidth,
-          height: displayWidth,
-        }}
-      >
-        <div
-          className="border-solid bg-slate-800 border-slate-100 border-2 absolute top-0 transition-all ease-in duration-200"
-          style={{
-            width: displayWidth,
-            height: displayWidth,
-            opacity: dragging ? 0 : 1,
-          }}
-        ></div>
-
-        <Draggable
-          position={{ x: 0, y: 0 }}
-          onStart={onDragStart}
-          onStop={onDragEnd}
-          nodeRef={nodeRef}
-        >
-          <div
-            ref={nodeRef}
-            className="absolute bg-slate-700 z-20"
-            style={{
-              opacity: dragging ? 1 : 0,
-            }}
-          >
-            <div
-              className="absolute top-0 border-solid bg-slate-800 border-slate-100 border-2 transition-all ease-in-out duration-500"
-              style={{
-                width: dragging ? spawnWidth : displayWidth,
-                height: dragging ? spawnWidth : displayWidth,
-              }}
-            ></div>
-          </div>
-        </Draggable>
-      </div>
+      <DraggableTemplate onStop={onDragEnd} displayWidth={displayWidth} spawnWidth={spawnWidth} ref={nodeRef}/>
       <div className="flex flex-row justify-center items-center relative">
         {/* Used to get coords of stage */}
         <div className="absolute top-0 left-0" ref={anchorRef}></div>
