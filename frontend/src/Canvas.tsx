@@ -3,7 +3,6 @@ import Draggable from "react-draggable";
 import { Layer, Stage, Shape, Rect } from "react-konva";
 import { Easings } from "konva/lib/Tween";
 import "./index.css";
-import { spawn } from "child_process";
 
 interface Furniture {
   x: number;
@@ -19,6 +18,8 @@ interface Coords {
   x: number;
   y: number;
 }
+
+
 
 // =======================
 // CANVAS PARAMS
