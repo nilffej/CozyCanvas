@@ -15,7 +15,7 @@ interface FurnitureItemProps {
   details: FurnitureDetails;
 }
 
-interface Coords {
+export interface Coords {
   x: number;
   y: number;
 }
@@ -27,10 +27,11 @@ const FurnitureItem = ({ details }: FurnitureItemProps) => {
 
   const canvasState = useContext<CanvasContextType | undefined>(CanvasContext);
 
+    // ** DEBUGGING USE** //
   useEffect(() => {
-    console.log(nodeRef);
-    console.log(x, y);
-    console.log(canvasState?.canvasDims.gridSize);
+    // console.log(nodeRef);
+    // console.log(x, y);
+    // console.log(canvasState?.canvasDims.gridSize);
   });
 
   if (!canvasState) {

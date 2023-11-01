@@ -9,7 +9,7 @@ export interface CanvasContextType {
     canvasRefs: any[],
     setCanvasRefs: any,
     anchorRef: any,
-    canvasDims: any,
+    canvasDims: CanvasDimensions,
     setCanvasDims: any,
 }
 
@@ -29,6 +29,15 @@ export interface Furniture {
   draggable: boolean;
   fill?: string;
   stroke?: string;
+}
+
+export interface CanvasProps {
+    furniture: Furniture[],
+    setFurniture: any,
+    canvasRefs: any[],
+    setCanvasRefs: any,
+    canvasDims: CanvasDimensions,
+    setCanvasDims: any,
 }
 
 export default function Planner() {
@@ -52,7 +61,7 @@ export default function Planner() {
       >
         <SidePanel></SidePanel>
         <div className="flex justify-center items-center w-full">
-          <Canvas ref={anchorRef} furniture={furniture} canvasRefs={canvasRefs} canvasDims={canvasDims}/>
+          <Canvas furniture={furniture} setFurniture={setFurniture} canvasRefs={canvasRefs} setCanvasRefs={setCanvasRefs} canvasDims={canvasDims} setCanvasDims={setCanvasDims} ref={anchorRef}/>
         </div>
       </CanvasContext.Provider>
     </div>
