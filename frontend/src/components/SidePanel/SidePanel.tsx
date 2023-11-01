@@ -35,7 +35,7 @@ const SidePanel = () => {
   };
 
   return (
-    <div className="fixed bg-white h-screen w-[22rem]">
+    <div className="bg-white h-screen w-[22rem] flex-shrink-0">
       <div className="relative text-xl font-semibold flex items-center p-4 text-stone-600 shadow-md z-10">
         CozyCanvas
       </div>

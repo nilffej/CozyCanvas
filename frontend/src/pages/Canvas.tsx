@@ -1,7 +1,7 @@
 import { Layer, Rect, Shape, Stage } from "react-konva";
 import { createRef, useEffect, useRef, useState } from "react";
 
-import Draggable from "react-draggable";
+import DraggableTemplate from "../components/DraggableTemplate";
 import { Easings } from "konva/lib/Tween";
 
 interface Furniture {
@@ -32,9 +32,7 @@ const rows = width / gridSize;
 export default function Canvas() {
   const [furniture, setFurniture] = useState<Furniture[]>([]);
 
-  const [refs, setRefs] = useState<any[]>([]);
-
-  const [dragging, setDragging] = useState<boolean>(false);
+  const [canvasRefs, setCanvasRefs] = useState<any[]>([]);
 
   // To avoid DOM Errors, attach to Draggable component
   const nodeRef = useRef<HTMLDivElement | null>(null);
@@ -77,7 +75,7 @@ export default function Canvas() {
       y = y - modY + Math.round(modY / gridSize) * gridSize;
     }
 
-    refs[id]?.current.to({
+    canvasRefs[id]?.current.to({
       x: x,
       y: y,
       easing: Easings.EaseInOut,
@@ -85,13 +83,7 @@ export default function Canvas() {
     });
   };
 
-  const onDragStart = (e: any) => {
-    setDragging(true);
-  };
-
   const onDragEnd = (e: any, data: any) => {
-    setDragging(false);
-
     // Get spawnerCoords relevant to page after dropping
     const spawnerCoords = nodeRef?.current?.getBoundingClientRect();
     const spawnX = spawnerCoords?.left;
@@ -129,7 +121,7 @@ export default function Canvas() {
     };
 
     setFurniture([...furniture, newRect]);
-    setRefs([...refs, createRef()]);
+    setCanvasRefs([...canvasRefs, createRef()]);
   };
 
   // ** DEBUGGING USE** //
@@ -147,7 +139,7 @@ export default function Canvas() {
 
   // Handling spawning and snapping of a new furniture item
   useEffect(() => {
-    if (refs.length !== 0) {
+    if (canvasRefs.length !== 0) {
       let x = furniture[furniture.length - 1].x;
       let y = furniture[furniture.length - 1].y;
 
@@ -157,108 +149,74 @@ export default function Canvas() {
       x = x - modX + Math.round(modX / gridSize) * gridSize;
       y = y - modY + Math.round(modY / gridSize) * gridSize;
 
-      refs[refs.length - 1].current?.to({
+      canvasRefs[canvasRefs.length - 1].current?.to({
         x: x,
         y: y,
         duration: 0.5,
         easing: Easings.EaseInOut,
       });
     }
-  }, [refs, furniture]);
+  }, [canvasRefs, furniture]);
+
+  /* <DraggableTemplate
+        onStop={onDragEnd}
+        displayWidth={displayWidth}
+        spawnWidth={spawnWidth}
+        ref={nodeRef}
+      /> */
 
   return (
-    <div className="w-full h-full flex flex-row justify-center items-center">
-      <div
-        className="relative"
-        style={{
-          width: displayWidth,
-          height: displayWidth,
-        }}
-      >
-        <div
-          className="border-solid bg-slate-800 border-slate-100 border-2 absolute top-0 transition-all ease-in duration-200"
-          style={{
-            width: displayWidth,
-            height: displayWidth,
-            opacity: dragging ? 0 : 1,
-          }}
-        ></div>
+    <div className="flex flex-row justify-center items-center relative">
+      {/* Used to get coords of stage */}
+      <div className="absolute top-0 left-0" ref={anchorRef}></div>
+      <Stage width={width} height={height} className="z-10">
+        <Layer>
+          <Rect
+            x={0}
+            y={0}
+            width={width}
+            height={height}
+            fill="#0f172a"
+            shadowBlur={10}
+          ></Rect>
+          <Shape
+            stroke="#1e293b"
+            strokeWidth={10}
+            sceneFunc={(context) => {
+              context.lineWidth = 4;
+              context.strokeStyle = "#1e293b";
+              context.beginPath();
+              let i = 0;
+              for (i = 0; i <= rows; i++) {
+                context.moveTo(gridSize * i, 0);
+                context.lineTo(gridSize * i, height);
+                context.stroke();
+              }
+              for (i = 0; i <= cols; i++) {
+                context.moveTo(0, gridSize * i);
+                context.lineTo(width, gridSize * i);
+                context.stroke();
+              }
 
-        <Draggable
-          position={{ x: 0, y: 0 }}
-          onStart={onDragStart}
-          onStop={onDragEnd}
-          nodeRef={nodeRef}
-        >
-          <div
-            ref={nodeRef}
-            className="absolute bg-slate-700 z-20"
-            style={{
-              opacity: dragging ? 1 : 0,
+              context.closePath();
             }}
-          >
-            <div
-              className="absolute top-0 border-solid bg-slate-800 border-slate-100 border-2 transition-all ease-in-out duration-500"
-              style={{
-                width: dragging ? spawnWidth : displayWidth,
-                height: dragging ? spawnWidth : displayWidth,
-              }}
-            ></div>
-          </div>
-        </Draggable>
-      </div>
-      <div className="flex flex-row justify-center items-center relative">
-        {/* Used to get coords of stage */}
-        <div className="absolute top-0 left-0" ref={anchorRef}></div>
-        <Stage width={width} height={height} className="z-10">
-          <Layer>
-            <Rect
-              x={0}
-              y={0}
-              width={width}
-              height={height}
-              fill="#0f172a"
-              shadowBlur={10}
-            ></Rect>
-            <Shape
-              stroke="#1e293b"
-              strokeWidth={10}
-              sceneFunc={(context) => {
-                context.lineWidth = 4;
-                context.strokeStyle = "#1e293b";
-                context.beginPath();
-                let i = 0;
-                for (i = 0; i <= rows; i++) {
-                  context.moveTo(gridSize * i, 0);
-                  context.lineTo(gridSize * i, height);
-                  context.stroke();
-                }
-                for (i = 0; i <= cols; i++) {
-                  context.moveTo(0, gridSize * i);
-                  context.lineTo(width, gridSize * i);
-                  context.stroke();
-                }
-
-                context.closePath();
-              }}
-            />
-          </Layer>
-          <Layer>
-            {/* Spawn Layer */}
-            {furniture.map((furn: Furniture, i: number) => {
-              return (
-                <Rect
-                  key={i}
-                  id={`${i}`}
-                  {...furn}
-                  ref={refs[i]}
-                  onDragEnd={onFurnDragEnd}
-                />
-              );
-            })}
-          </Layer>
-        </Stage>
-      </div>
+          />
+        </Layer>
+        <Layer>
+          {/* Spawn Layer */}
+          {furniture.map((furn: Furniture, i: number) => {
+            return (
+              <Rect
+                key={i}
+                id={`${i}`}
+                {...furn}
+                ref={canvasRefs[i]}
+                onDragEnd={onFurnDragEnd}
+              />
+            );
+          })}
+        </Layer>
+      </Stage>
     </div>
   );
 }
