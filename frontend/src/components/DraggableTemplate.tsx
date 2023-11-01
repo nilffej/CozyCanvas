@@ -2,15 +2,17 @@ import Draggable, { DraggableEventHandler } from "react-draggable";
 import { forwardRef, useState } from "react";
 
 interface DraggableTemplateProps {
+  children: React.ReactNode
   img?: any;
   spawnWidth: number; // Size on grid
+  spawnHeight: number;
   displayWidth?: number; // Size of img in sidebar
   onStart?: DraggableEventHandler;
   onStop?: DraggableEventHandler;
 }
 
 const DraggableTemplate = forwardRef(function DraggableTemplate(
-  { img, spawnWidth, displayWidth, onStart, onStop }: DraggableTemplateProps,
+  { children, img, spawnWidth, spawnHeight, displayWidth, onStart, onStop }: DraggableTemplateProps,
   nodeRef: any
 ) {
   const [dragging, setDragging] = useState<boolean>(false);
@@ -40,7 +42,9 @@ const DraggableTemplate = forwardRef(function DraggableTemplate(
           height: displayWidth,
           opacity: dragging ? 0 : 1,
         }}
-      ></div>
+      >
+        {children}
+      </div>
 
       <Draggable
         position={{ x: 0, y: 0 }}
@@ -50,16 +54,16 @@ const DraggableTemplate = forwardRef(function DraggableTemplate(
       >
         <div
           ref={nodeRef}
-          className="absolute bg-slate-700 z-20"
+          className="absolute bg-stone-800 z-20"
           style={{
             opacity: dragging ? 1 : 0,
           }}
         >
           <div
-            className="absolute top-0 border-solid bg-slate-800 border-slate-100 border-2 transition-all ease-in-out duration-500"
+            className="absolute top-0 border-solid bg-stone-800 border-stone-600 border-2 transition-all ease-in-out duration-500"
             style={{
               width: dragging ? spawnWidth : displayWidth,
-              height: dragging ? spawnWidth : displayWidth,
+              height: dragging ? spawnHeight : displayWidth,
             }}
           ></div>
         </div>

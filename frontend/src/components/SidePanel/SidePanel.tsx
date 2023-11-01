@@ -36,10 +36,10 @@ const SidePanel = () => {
 
   return (
     <div className="bg-white h-screen w-[22rem] flex-shrink-0">
-      <div className="relative text-xl font-semibold flex items-center p-4 text-stone-600 shadow-md z-10">
+      <div className="relative text-xl font-semibold flex items-center p-4 text-stone-600 shadow-md z-20">
         CozyCanvas
       </div>
-      <div className="relative z-0">
+      <div className="relative z-10">
         {data?.map(({ category, items }) => (
           <Accordion
             square

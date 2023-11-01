@@ -1,50 +1,25 @@
 import { Layer, Rect, Shape, Stage } from "react-konva";
-import { createRef, useEffect, useRef, useState } from "react";
+import { createRef, forwardRef, useEffect, useRef, useState } from "react";
 
-import DraggableTemplate from "../components/DraggableTemplate";
 import { Easings } from "konva/lib/Tween";
+import { CanvasDimensions, Furniture } from "../Planner";
 
-interface Furniture {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-  draggable: boolean;
-  fill?: string;
-  stroke?: string;
+interface CanvasProps {
+  furniture: Furniture[];
+  canvasRefs: any[];
+  canvasDims: CanvasDimensions;
 }
 
-interface Coords {
-  x: number;
-  y: number;
-}
-
-// =======================
-// CANVAS PARAMS
-// =======================
-
-const gridSize = 20;
-const width = 600;
-const height = 800;
-const cols = height / gridSize;
-const rows = width / gridSize;
-
-export default function Canvas() {
-  const [furniture, setFurniture] = useState<Furniture[]>([]);
-
-  const [canvasRefs, setCanvasRefs] = useState<any[]>([]);
-
-  // To avoid DOM Errors, attach to Draggable component
-  const nodeRef = useRef<HTMLDivElement | null>(null);
-
-  // To get coords of stage
-  const anchorRef = useRef<HTMLDivElement | null>(null);
-
-  // Size of a furniture square in sidebar
-  const displayWidth = 40;
-
-  // Size of a furniture square when spawned
-  const spawnWidth = 300;
+const Canvas = forwardRef(function Canvas(
+  { furniture, canvasRefs, canvasDims }: CanvasProps,
+  anchorRef: any
+) {
+  // =======================
+  // CANVAS PARAMS
+  // =======================
+  const { width, height, gridSize } = canvasDims;
+  const cols = height / gridSize;
+  const rows = width / gridSize;
 
   // ****NOTE****
   // Mouse event coords are based on mouse -> need to calculate rect coords
@@ -52,6 +27,10 @@ export default function Canvas() {
 
   const onFurnDragEnd = (e: any) => {
     let id = Number(e.target.attrs.id);
+
+    // Size of a furniture square when spawned
+    const spawnWidth = furniture[id].width;
+    const spawnHeight = furniture[id].height;
 
     // These coords are relevant to stage
     let x = e.target.attrs.x;
@@ -68,8 +47,8 @@ export default function Canvas() {
 
     if (y < 0) {
       y = 0;
-    } else if (y + spawnWidth > height) {
-      y = height - spawnWidth;
+    } else if (y + spawnHeight > height) {
+      y = height - spawnHeight;
     } else {
       let modY = y % gridSize;
       y = y - modY + Math.round(modY / gridSize) * gridSize;
@@ -83,59 +62,15 @@ export default function Canvas() {
     });
   };
 
-  const onDragEnd = (e: any, data: any) => {
-    // Get spawnerCoords relevant to page after dropping
-    const spawnerCoords = nodeRef?.current?.getBoundingClientRect();
-    const spawnX = spawnerCoords?.left;
-    const spawnY = spawnerCoords?.top;
-
-    // Get stageCoords relevant to page
-    const stageCoords = anchorRef?.current?.getBoundingClientRect();
-    const offsetX = stageCoords?.left;
-    const offsetY = stageCoords?.top;
-
-    // Before subtracting offset, coords are relative to the page
-    // Need to subtract offset to get coords relevant to the stage
-    let dragEndCoords: Coords = {
-      x: (spawnX || 0) - (offsetX || 0),
-      y: (spawnY || 0) - (offsetY || 0),
-    };
-
-    // If box limits are out of bounds of canvas, then don't make anything
-    if (
-      dragEndCoords.x + spawnWidth > width ||
-      dragEndCoords.y + spawnWidth > height
-    ) {
-      return;
-    }
-
-    // Might need to adjust spawn coords if we edit dimensions of the Canvas
-    const newRect: Furniture = {
-      x: dragEndCoords.x,
-      y: dragEndCoords.y,
-      width: spawnWidth,
-      height: spawnWidth,
-      draggable: true,
-      fill: "#1e293b",
-      stroke: "#64748b",
-    };
-
-    setFurniture([...furniture, newRect]);
-    setCanvasRefs([...canvasRefs, createRef()]);
-  };
-
   // ** DEBUGGING USE** //
   useEffect(() => {
-    // console.log(furniture);
-    // console.log(refs);
+    console.log(furniture);
+    console.log(canvasRefs);
     // console.log(mouseCoords);
     // console.log(spawnerCoords);
     // console.log(furniture);
+    // console.log(anchorRef?.current?.getBoundingClientRect());
   }, [furniture]);
-
-  useEffect(() => {
-    console.log(anchorRef?.current?.getBoundingClientRect());
-  }, []);
 
   // Handling spawning and snapping of a new furniture item
   useEffect(() => {
@@ -166,25 +101,25 @@ export default function Canvas() {
       /> */
 
   return (
-    <div className="flex flex-row justify-center items-center relative">
+    <div className="flex flex-row justify-center items-center relative z-0">
       {/* Used to get coords of stage */}
       <div className="absolute top-0 left-0" ref={anchorRef}></div>
-      <Stage width={width} height={height} className="z-10">
+      <Stage width={width} height={height}>
         <Layer>
           <Rect
             x={0}
             y={0}
             width={width}
             height={height}
-            fill="#0f172a"
+            fill="#e7e5e4"
             shadowBlur={10}
           ></Rect>
           <Shape
-            stroke="#1e293b"
+            stroke="#d6d3d1"
             strokeWidth={10}
             sceneFunc={(context) => {
-              context.lineWidth = 4;
-              context.strokeStyle = "#1e293b";
+              context.lineWidth = 2;
+              context.strokeStyle = "#d6d3d1";
               context.beginPath();
               let i = 0;
               for (i = 0; i <= rows; i++) {
@@ -219,4 +154,6 @@ export default function Canvas() {
       </Stage>
     </div>
   );
-}
+});
+
+export default Canvas;

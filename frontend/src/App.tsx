@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 import Canvas from "./pages/Canvas";
 import SidePanel from "./components/SidePanel/SidePanel";
+import Planner from "./Planner";
 
 function App() {
   // const [data, setData] = useState("");
@@ -17,11 +18,8 @@ function App() {
   // }, []);
 
   return (
-    <div className="flex">
-      <SidePanel></SidePanel>
-      <div className="flex justify-center items-center w-full">
-        <Canvas />
-      </div>
+    <div>
+      <Planner/>
     </div>
   );
 }
