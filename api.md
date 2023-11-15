@@ -15,23 +15,16 @@ interface Item {
 }
 ```
 
-## Accounts
-
-**Ignore for now, all created canvas will be under username "user"**
-
-- /accounts/login
-- /accounts/logout
-- /accounts/create-account
-
 ## Canvas
 
-- `/canvas/all`
-    - GET: Returns a list `/canvas/<name>-<uuid>`
+- `/canvas`
+    - GET: Returns a list `/canvas/<name>-<uuid>` for all canvases
+    - POST: Uploads the list of canvas (canvas should be a dict), returns a list of ids corresponding to the uploaded canvas
 - `/canvas/<name>-<uuid>`
     - GET: Get the canvas
         - Returns `Item[]`
-    - POST: Overwrite a canvas
         - Send to server: `{items: []Item}`
+    - PUT: replaces content of 
     - DELETE: Deletes the canvas
 
 ## Presets
