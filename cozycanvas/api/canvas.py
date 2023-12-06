@@ -1,5 +1,6 @@
 import cozycanvas
 from flask import request, abort, jsonify, make_response
+from bson.objectid import ObjectId
 
 
 @cozycanvas.app.route('/canvas', methods=['GET', 'POST'])
@@ -29,10 +30,11 @@ def canvas(id):
     canvases = db['canvases']
     if request.method == 'GET':
         print("finding with id", id)
-        found = canvases.find_one({"_id": id})
+        found = canvases.find_one(ObjectId(id))
         if found is None:
             abort(404)
-        return found
+        del found["_id"]
+        return jsonify(found)
     elif request.method == 'PUT':
         newElement = dict(request.form)
         newElement['_id'] = id

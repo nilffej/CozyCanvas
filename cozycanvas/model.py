@@ -7,4 +7,3 @@ def get_mongodb():
         flask.g.mongo_client = client
         flask.g.mongo_db = client["cozycanvas"]
     return flask.g.mongo_db
-

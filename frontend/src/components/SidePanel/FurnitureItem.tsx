@@ -1,8 +1,8 @@
 import { useContext, useEffect, useRef } from "react";
 import { FurnitureDetails } from "../../shared/types";
-import { CanvasContext, CanvasContextType } from "../../Planner";
+import { CanvasContext, CanvasContextType } from "../../routes/Planner";
 import { createRef } from "react";
-import { Furniture } from "../../Planner";
+import { Furniture } from "../../routes/Planner";
 import DraggableTemplate from "../DraggableTemplate";
 
 const FurnitureItemStyles = {
@@ -27,7 +27,7 @@ const FurnitureItem = ({ details }: FurnitureItemProps) => {
 
   const canvasState = useContext<CanvasContextType | undefined>(CanvasContext);
 
-    // ** DEBUGGING USE** //
+  // ** DEBUGGING USE** //
   useEffect(() => {
     // console.log(nodeRef);
     // console.log(x, y);
@@ -107,7 +107,7 @@ const FurnitureItem = ({ details }: FurnitureItemProps) => {
         spawnHeight={y * canvasDims.gridSize}
         onStop={onDragEnd}
       >
-        <img className="h-16 w-16 hover:cursor-grab" src={imgSrc} alt="" />
+        <img className="h-16 w-16" src={imgSrc} alt="" />
       </DraggableTemplate>
       <div className="flex-col ml-4">
         <div className="font-bold">{name}</div>
