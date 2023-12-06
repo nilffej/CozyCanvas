@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import Canvas from "./pages/Canvas";
 import SidePanel from "./components/SidePanel/SidePanel";
 import Planner from "./Planner";
+import CustomShapeEditor from "./components/CustomShapeEditor";
 
 function App() {
   // const [data, setData] = useState("");
@@ -20,6 +21,7 @@ function App() {
   return (
     <div>
       <Planner/>
+      <CustomShapeEditor/>
     </div>
   );
 }

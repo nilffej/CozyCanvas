@@ -9,4 +9,5 @@ app.config.from_envvar('INSTA485_SETTINGS', silent=True)
 
 
 import cozycanvas.views  # noqa: E402  pylint: disable=wrong-import-position
+import cozycanvas.api  # noqa: E402  pylint: disable=wrong-import-position
 import cozycanvas.model
