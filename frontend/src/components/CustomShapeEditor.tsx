@@ -208,15 +208,18 @@ export default function CustomShapeEditor({}) {
         </Layer>
       </Stage>
       <button onClick={() => {
-        fetch("/canvas/", {
+        fetch("http://localhost:8000/canvas", {
           method: "POST",
           headers: {
             'Content-Type': 'application/json',
-            // Add any other headers as needed
           },
-          body: JSON.stringify(points),
+          body: JSON.stringify([{data: points}]),
         }).then((response) => {
-          console.log(response);
+          return response.json()
+        }).then((data) => {
+          console.log(data);
+        }).catch((error) => {
+          console.log(error);
         })
 
       }}>
