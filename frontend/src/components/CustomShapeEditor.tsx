@@ -114,6 +114,9 @@ export default function CustomShapeEditor({}) {
         { x: minCoords.x, y: maxCoords.y },
       ]);
   };
+
+
+
   return (
     <div className="w-screen h-screen flex justify-center items-center">
       <Stage width={width} height={height}>
@@ -204,6 +207,21 @@ export default function CustomShapeEditor({}) {
           })}
         </Layer>
       </Stage>
+      <button onClick={() => {
+        fetch("/canvas/", {
+          method: "POST",
+          headers: {
+            'Content-Type': 'application/json',
+            // Add any other headers as needed
+          },
+          body: JSON.stringify(points),
+        }).then((response) => {
+          console.log(response);
+        })
+
+      }}>
+        Save
+      </button>
     </div>
   );
 }
