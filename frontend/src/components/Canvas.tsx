@@ -4,7 +4,7 @@ import { createRef, forwardRef, useEffect, useRef, useState } from "react";
 import { Easings } from "konva/lib/Tween";
 import { CanvasDimensions, CanvasProps, Furniture } from "../routes/Planner";
 import { Coords } from "./SidePanel/FurnitureItem";
-
+import { findFurnitureAttributes } from "../shared/testdata";
 
 export interface ContextMenuSelect {
   coords: Coords;
@@ -37,6 +37,7 @@ const Canvas = forwardRef(function Canvas(
 
   const [showMenu, setShowMenu] = useState<boolean>(false);
   const [contextData, setContextData] = useState<ContextMenuSelect | null>();
+  const [furnDetails, setFurnDetails] = useState<any>();
 
   // ****NOTE****
   // Mouse event coords are based on mouse -> need to calculate rect coords
@@ -97,6 +98,7 @@ const Canvas = forwardRef(function Canvas(
       select: getId(e),
       name: furniture[getId(e)].name,
     });
+    setFurnDetails(findFurnitureAttributes(furniture[getId(e)].name));
   };
 
   // ** DEBUGGING USE** //
@@ -107,7 +109,7 @@ const Canvas = forwardRef(function Canvas(
     // console.log(spawnerCoords);
     // console.log(furniture);
     // console.log(anchorRef?.current?.getBoundingClientRect());
-    // console.log(contextData);
+    console.log(contextData);
   }, [contextData]);
 
   // Handling spawning and snapping of a new furniture item
@@ -149,12 +151,6 @@ const Canvas = forwardRef(function Canvas(
     }
   }, [canvasRefs, furniture]);
 
-  /* <DraggableTemplate
-        onStop={onDragEnd}
-        displayWidth={displayWidth}
-        spawnWidth={spawnWidth}
-        ref={nodeRef}
-      /> */
 
   return (
     <div className="flex flex-row justify-center items-center relative z-0">
@@ -226,18 +222,30 @@ const Canvas = forwardRef(function Canvas(
               setShowMenu(false);
             }}
           >
-            <div
-              className="flex w-full h-min bg-stone-100 p-4"
-            >
-                <img className="h-16 w-16" src={"imgSrc"} alt="" />
+            <div className="flex w-full h-min bg-stone-100 p-4">
+              <img className="h-16 w-16" src={furnDetails.imgSrc} alt="" />
               <div className="flex-col ml-4">
-                <div className="font-bold">{"Example"}</div>
+                <div className="font-bold">{furnDetails.name}</div>
                 <div className="text-sm">
-                  {"X"} x {"Y"}
+                  {furnDetails.x} x {furnDetails.y}
                 </div>
-                <div className="text-sm text-emerald-600">${"price"}</div>
+                <div className="text-sm text-emerald-600">${furnDetails.price}</div>
               </div>
             </div>
+            <button onClick={() => {
+              const id = contextData.select
+              setShowMenu(false);
+              let dupe = [...furniture]
+              dupe.splice(id, 1);
+              setFurniture(dupe);
+              let refs = [...canvasRefs]
+              refs.splice(id, 1);
+              setCanvasRefs(refs);
+            }}
+              className="my-2 mx-3 py-1 px-3 bg-red-700 text-sm text-slate-100 transition-all hover:text-red-900 hover:bg-slate-300"
+            >
+              Delete
+            </button>
           </div>
         )}
       </div>

@@ -73,15 +73,19 @@ export default function Planner() {
     if (id) {
       fetch(`http://localhost:8000/canvas/${id}`, {
         method: "GET",
-      }).then((response) => {
-        return response.json()
-      }).then((data) => {
-        setFurniture(data.furniture);
-        const refs = data.furniture.map(() => createRef());
-        setCanvasRefs(refs);
-      }).catch((error) => {
-        console.log(error);
       })
+        .then((response) => {
+          return response.json();
+        })
+        .then((data) => {
+          setFurniture(data.furniture);
+          setCanvasDims(data.canvasDims);
+          const refs = data.furniture.map(() => createRef());
+          setCanvasRefs(refs);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     }
   }, []);
 
@@ -89,24 +93,27 @@ export default function Planner() {
     fetch("http://localhost:8000/canvas", {
       method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify([
         {
           title: "",
           canvasDims: canvasDims,
-          furniture: furniture
-        }
+          furniture: furniture,
+        },
       ]),
-    }).then((response) => {
-      return response.json()
-    }).then((data) => {
-      const redirectURL = data[0];
-      navigate(redirectURL);
-    }).catch((error) => {
-      console.log(error);
     })
-  }
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        const redirectURL = data[0];
+        navigate(redirectURL);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   return (
     <div className="flex">
@@ -122,12 +129,37 @@ export default function Planner() {
         }}
       >
         <SidePanel></SidePanel>
-        <div className="flex justify-center relative items-center w-full">
+        <button
+          className="absolute bottom-8 right-8 bg-green-500 text-slate-100 py-1 px-4 z-20 hover:bg-slate-200 hover:text-green-700 transition-all"
+          onClick={handleSave}
+        >
+          Save
+        </button>
+        <div className="flex flex-col gap-5 justify-center relative items-center w-full">
           <CanvasSizer
             input={input}
             setShowConfirm={setShowConfirm}
             setInput={setInput}
           ></CanvasSizer>
+          <input
+            placeholder="Title"
+            name="Title"
+            className="bg-transparent focus:outline-none text-center
+          text-3xl
+          transition-all outline-none
+          placeholder-neutral-500
+          placeholder-opacity-50
+          border-b-2
+          border-transparent
+          hover:border-slate-400
+          focus:border-b-2
+          focus:border-slate-800
+          py-1
+          font-semibold
+          tracking-widest
+        "
+            onChange={() => {}}
+          ></input>
           <Canvas
             furniture={furniture}
             setFurniture={setFurniture}
@@ -140,29 +172,31 @@ export default function Planner() {
         </div>
         {showConfirm && (
           <div className="absolute top-0 left-0 z-10 w-full h-full flex flex-col justify-center items-center bg-slate-600 bg-opacity-30">
-            <div className="text-lg">
+            <div className="flex flex-col justify-center gap-20 text-lg text-center w-1/2 h-1/2 bg-slate-100 items-center shadow-md shadow-slate-400">
               Note: Furniture items currently on canvas will be deleted. Is that
               okay?
-            </div>
-            <div className="flex gap-5">
-              <button
-                onClick={() => {
-                  setShowConfirm(false);
-                  setCanvasDims(input);
-                  setFurniture([]);
-                  setCanvasRefs([]);
-                }}
-              >
-                Yes
-              </button>
-              <button
-                onClick={() => {
-                  setShowConfirm(false);
-                  setInput(canvasDims);
-                }}
-              >
-                No
-              </button>
+              <div className="flex gap-20 text-md">
+                <button
+                className="px-10 py-3 bg-green-500 text-slate-100 hover:bg-slate-200 hover:text-green-700 transition-all"
+                  onClick={() => {
+                    setShowConfirm(false);
+                    setCanvasDims(input);
+                    setFurniture([]);
+                    setCanvasRefs([]);
+                  }}
+                >
+                  Yes
+                </button>
+                <button
+                className="px-10 py-3 bg-red-700 text-slate-100 transition-all hover:text-red-900 hover:bg-slate-300"
+                  onClick={() => {
+                    setShowConfirm(false);
+                    setInput(canvasDims);
+                  }}
+                >
+                  No
+                </button>
+              </div>
             </div>
           </div>
         )}
