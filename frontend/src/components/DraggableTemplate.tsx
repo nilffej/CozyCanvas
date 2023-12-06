@@ -1,7 +1,7 @@
 import Draggable, { DraggableEventHandler } from "react-draggable";
 import { forwardRef, useState } from "react";
 
-interface DraggableTemplateProps {
+interface DraggableTemplateProps{
   children: React.ReactNode
   img?: any;
   spawnWidth: number; // Size on grid
@@ -29,11 +29,12 @@ const DraggableTemplate = forwardRef(function DraggableTemplate(
 
   return (
     <div
-      className="relative"
+      className="relative hover:cursor-grab"
       style={{
         width: displayWidth,
         height: displayWidth,
       }}
+      
     >
       <div
         className="border-solid bg-slate-800 border-slate-100 border-2 absolute top-0 transition-all ease-in duration-200"

@@ -2,8 +2,8 @@ import { Layer, Rect, Shape, Stage } from "react-konva";
 import { createRef, forwardRef, useEffect, useRef, useState } from "react";
 
 import { Easings } from "konva/lib/Tween";
-import { CanvasDimensions, CanvasProps, Furniture } from "../Planner";
-import { Coords } from "../components/SidePanel/FurnitureItem";
+import { CanvasDimensions, CanvasProps, Furniture } from "../routes/Planner";
+import { Coords } from "./SidePanel/FurnitureItem";
 
 export interface ContextMenuSelect {
   coords: Coords;
@@ -223,12 +223,18 @@ const Canvas = forwardRef(function Canvas(
               setShowMenu(false);
             }}
           >
-            <ul className="flex flex-col gap-2 text-sm">
-              <li className="hover:bg-blue-600 w-full p-2">Send to back</li>
-              <li className="hover:bg-blue-600 w-full p-2">Send backwards</li>
-              <li className="hover:bg-blue-600 w-full p-2">Send forward</li>
-              <li className="hover:bg-blue-600 w-full p-2">Send to front</li>
-            </ul>
+            <div
+              className="flex w-full h-min bg-stone-100 p-4"
+            >
+                <img className="h-16 w-16" src={"imgSrc"} alt="" />
+              <div className="flex-col ml-4">
+                <div className="font-bold">{"Example"}</div>
+                <div className="text-sm">
+                  {"X"} x {"Y"}
+                </div>
+                <div className="text-sm text-emerald-600">${"price"}</div>
+              </div>
+            </div>
           </div>
         )}
       </div>
