@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { CanvasContext, CanvasContextType, CanvasDimensions } from "../Planner";
+import { CanvasContext, CanvasContextType, CanvasDimensions } from "../routes/Planner";
 
 export interface CanvasSizerProps{
   setShowConfirm: any,
@@ -47,7 +47,7 @@ export default function CanvasSizer({setShowConfirm, setInput, input}: CanvasSiz
           gridSize: Number(e.target.value),
         })}}
       ></input>
-      <button onClick={() => {setShowConfirm(true)}}>Save</button>
+      <button onClick={() => {setShowConfirm(true)}}>Resize</button>
     </div>
   );
 }
