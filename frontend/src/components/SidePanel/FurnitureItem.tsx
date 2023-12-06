@@ -80,6 +80,7 @@ const FurnitureItem = ({ details }: FurnitureItemProps) => {
 
     // Might need to adjust spawn coords if we edit dimensions of the Canvas
     const newRect: Furniture = {
+      name: name,
       x: dragEndCoords.x,
       y: dragEndCoords.y,
       width: x * canvasDims.gridSize,

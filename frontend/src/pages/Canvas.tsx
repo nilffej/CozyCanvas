@@ -5,9 +5,11 @@ import { Easings } from "konva/lib/Tween";
 import { CanvasDimensions, CanvasProps, Furniture } from "../Planner";
 import { Coords } from "../components/SidePanel/FurnitureItem";
 
+
 export interface ContextMenuSelect {
   coords: Coords;
   select: number;
+  name: string;
 }
 
 const Canvas = forwardRef(function Canvas(
@@ -93,6 +95,7 @@ const Canvas = forwardRef(function Canvas(
         y: e.evt.clientY,
       },
       select: getId(e),
+      name: furniture[getId(e)].name,
     });
   };
 
@@ -105,7 +108,7 @@ const Canvas = forwardRef(function Canvas(
     // console.log(furniture);
     // console.log(anchorRef?.current?.getBoundingClientRect());
     // console.log(contextData);
-  }, [canvasRefs]);
+  }, [contextData]);
 
   // Handling spawning and snapping of a new furniture item
   useEffect(() => {
@@ -136,13 +139,13 @@ const Canvas = forwardRef(function Canvas(
       // **** Not sure if I need to update refs as well ****
 
       // This updates furniture if it changes
-      let newFurn = [...furniture];
-      newFurn[furniture.length - 1] = {
-        ...furniture[furniture.length - 1],
-        x: x,
-        y: y,
-      };
-      setFurniture(newFurn);
+      // let newFurn = [...furniture];
+      // newFurn[furniture.length - 1] = {
+      //   ...furniture[furniture.length - 1],
+      //   x: x,
+      //   y: y,
+      // };
+      // setFurniture(newFurn);
     }
   }, [canvasRefs, furniture]);
 
@@ -224,10 +227,7 @@ const Canvas = forwardRef(function Canvas(
             }}
           >
             <ul className="flex flex-col gap-2 text-sm">
-              <li className="hover:bg-blue-600 w-full p-2">Send to back</li>
-              <li className="hover:bg-blue-600 w-full p-2">Send backwards</li>
-              <li className="hover:bg-blue-600 w-full p-2">Send forward</li>
-              <li className="hover:bg-blue-600 w-full p-2">Send to front</li>
+
             </ul>
           </div>
         )}
