@@ -57,6 +57,7 @@ export default function Planner() {
   });
 
   const [showConfirm, setShowConfirm] = useState<boolean>(false);
+  const [showSave, setShowSave] = useState<boolean>(false);
 
   const [input, setInput] = useState<CanvasDimensions>(canvasDims);
 
@@ -113,6 +114,8 @@ export default function Planner() {
       .catch((error) => {
         console.log(error);
       });
+    setShowSave(true);
+    console.log(window.location.href);
   };
 
   return (
@@ -130,7 +133,7 @@ export default function Planner() {
       >
         <SidePanel></SidePanel>
         <button
-          className="absolute bottom-8 right-8 bg-green-500 text-slate-100 py-1 px-4 z-20 hover:bg-slate-200 hover:text-green-700 transition-all"
+          className="absolute bottom-8 right-8 bg-green-500 text-slate-100 py-1 px-4 z-10 hover:bg-slate-200 hover:text-green-700 transition-all"
           onClick={handleSave}
         >
           Save
@@ -171,13 +174,13 @@ export default function Planner() {
           />
         </div>
         {showConfirm && (
-          <div className="absolute top-0 left-0 z-10 w-full h-full flex flex-col justify-center items-center bg-slate-600 bg-opacity-30">
+          <div className="absolute top-0 left-0 z-20 w-full h-full flex flex-col justify-center items-center bg-slate-600 bg-opacity-30">
             <div className="flex flex-col justify-center gap-20 text-lg text-center w-1/2 h-1/2 bg-slate-100 items-center shadow-md shadow-slate-400">
               Note: Furniture items currently on canvas will be deleted. Is that
               okay?
               <div className="flex gap-20 text-md">
                 <button
-                className="px-10 py-3 bg-green-500 text-slate-100 hover:bg-slate-200 hover:text-green-700 transition-all"
+                  className="px-10 py-3 bg-green-500 text-slate-100 hover:bg-slate-200 hover:text-green-700 transition-all"
                   onClick={() => {
                     setShowConfirm(false);
                     setCanvasDims(input);
@@ -188,13 +191,43 @@ export default function Planner() {
                   Yes
                 </button>
                 <button
-                className="px-10 py-3 bg-red-700 text-slate-100 transition-all hover:text-red-900 hover:bg-slate-300"
+                  className="px-10 py-3 bg-red-700 text-slate-100 transition-all hover:text-red-900 hover:bg-slate-300"
                   onClick={() => {
                     setShowConfirm(false);
                     setInput(canvasDims);
                   }}
                 >
                   No
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+        {showSave && (
+          <div className="absolute top-0 left-0 z-20 w-full h-full flex flex-col justify-center items-center bg-slate-600 bg-opacity-30">
+            <div className="flex flex-col justify-center gap-20 text-lg text-center w-1/2 h-1/2 bg-slate-100 items-center shadow-md shadow-slate-400">
+              <div className="text-3xl">Share Link</div>
+              <input
+                type="text"
+                className="w-full text-center mx-2 px-2 py-3"
+                value={window.location.href}
+              ></input>
+              <div className="flex flex-row gap-5">
+                <button
+                  className="border-2 px-4 py-2 transition-all shadow-md hover:text-slate-700 hover:bg-slate-200 active:bg-slate-300 bg-slate-100 active:shadow-inner"
+                  onClick={() => {
+                    navigator.clipboard.writeText(window.location.href);
+                  }}
+                >
+                  Copy
+                </button>
+                <button
+                  className="border-2 px-4 py-2 transition-all shadow-md hover:text-slate-700 hover:bg-slate-200 active:bg-slate-300 bg-slate-100 active:shadow-inner"
+                  onClick={() => {
+                    setShowSave(false);
+                  }}
+                >
+                  Close
                 </button>
               </div>
             </div>

@@ -77,7 +77,7 @@ export default function CanvasSizer({setShowConfirm, setInput, input}: CanvasSiz
 
       </div>
       
-      <button className= "bg-green-500 text-slate-100 py-1 px-4 z-20 hover:bg-slate-200 hover:text-green-700 transition-all" onClick={() => {setShowConfirm(true)}}>Resize</button>
+      <button className= "bg-green-500 text-slate-100 py-1 px-4 z-10 hover:bg-slate-200 hover:text-green-700 transition-all" onClick={() => {setShowConfirm(true)}}>Resize</button>
     </div>
   );
 }
