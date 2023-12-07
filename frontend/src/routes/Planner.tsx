@@ -50,10 +50,12 @@ export default function Planner() {
 
   const [canvasRefs, setCanvasRefs] = useState<any[]>([]);
 
+  const [canvasTitle, setCanvasTitle] = useState<string>("");
+
   const [canvasDims, setCanvasDims] = useState<CanvasDimensions>({
-    width: 500,
-    height: 500,
-    gridSize: 20,
+    width: 600,
+    height: 400,
+    gridSize: 40,
   });
 
   const [showConfirm, setShowConfirm] = useState<boolean>(false);
@@ -79,11 +81,16 @@ export default function Planner() {
           return response.json();
         })
         .then((data) => {
-          setCanvasDims(data.canvasDims);
+          console.log(data);
           const refs = data.furniture.map(() => createRef());
-          console.log(refs);
+
           setCanvasRefs(refs);
           setFurniture(data.furniture);
+
+          setCanvasDims(data.canvasDims);
+          setInput(data.canvasDims);
+
+          setCanvasTitle(data.title);
         })
         .catch((error) => {
           console.log(error);
@@ -99,7 +106,7 @@ export default function Planner() {
       },
       body: JSON.stringify([
         {
-          title: "",
+          title: canvasTitle,
           canvasDims: canvasDims,
           furniture: furniture,
         },
@@ -146,8 +153,10 @@ export default function Planner() {
             setInput={setInput}
           ></CanvasSizer>
           <input
+            value={canvasTitle}
             placeholder="Title"
             name="Title"
+            type="text"
             className="bg-transparent focus:outline-none text-center
           text-3xl
           transition-all outline-none
@@ -162,7 +171,7 @@ export default function Planner() {
           font-semibold
           tracking-widest
         "
-            onChange={() => {}}
+            onChange={(e) => setCanvasTitle(e.target.value)}
           ></input>
           <Canvas
             furniture={furniture}
@@ -177,8 +186,9 @@ export default function Planner() {
         {showConfirm && (
           <div className="absolute top-0 left-0 z-20 w-full h-full flex flex-col justify-center items-center bg-slate-600 bg-opacity-30">
             <div className="flex flex-col justify-center gap-20 text-lg text-center w-1/2 h-1/2 bg-slate-100 items-center shadow-md shadow-slate-400">
-              Note: Furniture items currently on canvas will be deleted. Is that
-              okay?
+              <span><span className="text-red-700 font-bold">Warning:</span> Furniture items currently on the canvas will be deleted.<br />
+                Resize canvas?
+              </span>
               <div className="flex gap-20 text-md">
                 <button
                   className="px-10 py-3 bg-green-500 text-slate-100 hover:bg-slate-200 hover:text-green-700 transition-all"
