@@ -141,13 +141,16 @@ const Canvas = forwardRef(function Canvas(
       // **** Not sure if I need to update refs as well ****
 
       // This updates furniture if it changes
-      // let newFurn = [...furniture];
-      // newFurn[furniture.length - 1] = {
-      //   ...furniture[furniture.length - 1],
-      //   x: x,
-      //   y: y,
-      // };
-      // setFurniture(newFurn);
+      setTimeout(() => {
+        let newFurn = [...furniture];
+        newFurn[furniture.length - 1] = {
+          ...furniture[furniture.length - 1],
+          x: x,
+          y: y,
+        };
+        setFurniture(newFurn);
+      }, 600);
+
     }
   }, [canvasRefs, furniture]);
 

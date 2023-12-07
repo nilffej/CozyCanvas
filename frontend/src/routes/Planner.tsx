@@ -78,10 +78,11 @@ export default function Planner() {
           return response.json();
         })
         .then((data) => {
-          setFurniture(data.furniture);
           setCanvasDims(data.canvasDims);
           const refs = data.furniture.map(() => createRef());
+          console.log(refs);
           setCanvasRefs(refs);
+          setFurniture(data.furniture);
         })
         .catch((error) => {
           console.log(error);
